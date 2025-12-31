@@ -12,6 +12,15 @@ public class CustomerController {
     public CustomerController() {
         this.customers = new ArrayList<>();
         this.nextCustomerId = 1;
+        initializeCustomers();
+    }
+
+    private void initializeCustomers() {
+        customers.add(new Customer(nextCustomerId++, "John Doe", "john@example.com", "555-1001"));
+        customers.add(new Customer(nextCustomerId++, "Jane Smith", "jane@example.com", "555-1002"));
+        customers.add(new Customer(nextCustomerId++, "Bob Johnson", "bob@example.com", "555-1003"));
+        customers.add(new Customer(nextCustomerId++, "Alice Williams", "alice@example.com", "555-1004"));
+        customers.add(new Customer(nextCustomerId++, "Charlie Brown", "charlie@example.com", "555-1005"));
     }
 
     public Customer createCustomer(String name, String email, String phone) {

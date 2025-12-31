@@ -26,7 +26,7 @@ public class OrderController {
             return null;
         }
 
-        Order order = new Order(nextOrderId++, LocalDate.now());
+        Order order = new Order(nextOrderId++,LocalDate.now());
 
         // Convert cart items to order items
         customer.getCart().getCartItems().forEach(cartItem -> {
@@ -42,10 +42,9 @@ public class OrderController {
         orders.add(order);
 
         // Clear cart after order
-        customer.getCart().getCartItems().clear();
-        customer.getCart().setTotalAmount(0.0);
+        customer.getCart().clearCart();
 
-        System.out.println("Order created: #" + order.getOrderId());
+        System.out.println("\n✓ Order created successfully: #" + order.getOrderId());
         return order;
     }
 

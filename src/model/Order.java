@@ -38,10 +38,6 @@ public class Order {
         System.out.println("Order " + orderId + " cancelled!");
     }
 
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
         calculateTotal();
@@ -52,19 +48,4 @@ public class Order {
                 .mapToDouble(OrderItem::getTotalPrice)
                 .sum();
     }
-
-    // Getters and Setters
-    public int getOrderId() { return orderId; }
-    public void setOrderId(int orderId) { this.orderId = orderId; }
-    public LocalDate getOrderDate() { return orderDate; }
-    public void setOrderDate(LocalDate orderDate) { this.orderDate = orderDate; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public double getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
-    public List<OrderItem> getOrderItems() { return orderItems; }
-    public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
-    public Invoice getInvoice() { return invoice; }
-    public Shipment getShipment() { return shipment; }
-    public void setShipment(Shipment shipment) { this.shipment = shipment; }
 }

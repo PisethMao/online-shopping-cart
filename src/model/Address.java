@@ -9,7 +9,6 @@ import lombok.*;
 
 
 public class Address {
-    // Getters and Setters
     private String street;
     private String city;
     private String postalCode;

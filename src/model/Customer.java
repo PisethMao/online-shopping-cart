@@ -42,12 +42,4 @@ public class Customer {
     public void addOrder(Order order) {
         orders.add(order);
     }
-
-    public void setCustomerId(int customerId) { this.customerId = customerId; }
-
-    public void setName(String name) { this.name = name; }
-
-    public void setEmail(String email) { this.email = email; }
-
-    public void setPhone(String phone) { this.phone = phone; }
 }

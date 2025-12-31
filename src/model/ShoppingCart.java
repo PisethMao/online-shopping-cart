@@ -38,6 +38,11 @@ public class ShoppingCart {
         calculateTotal();
     }
 
+    public void clearCart() {
+        cartItems.clear();
+        totalAmount = 0.0;
+    }
+
     public double getTotal() {
         return totalAmount;
     }
@@ -47,12 +52,5 @@ public class ShoppingCart {
                 .mapToDouble(CartItem::getTotal)
                 .sum();
     }
-
-    // Getters and Setters
-    public int getCartId() { return cartId; }
-    public void setCartId(int cartId) { this.cartId = cartId; }
-    public List<CartItem> getCartItems() { return cartItems; }
-    public void setCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
-    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
 
 }

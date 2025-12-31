@@ -9,11 +9,12 @@ import service.impl.DigitalWalletPayment;
 public class PaymentController {
     public void processPayment(Invoice invoice) {
         if (invoice != null && invoice.getPayment() != null) {
-            System.out.println("\n=== Processing Payment ===");
+            System.out.println("\n========== PAYMENT PROCESSING ==========");
             System.out.println("Invoice ID: " + invoice.getInvoiceId());
-            System.out.println("Amount: $" + invoice.getTotalAmount());
+            System.out.printf("Amount: $%.2f%n", invoice.getTotalAmount());
             invoice.getPayment().processPayment();
-            System.out.println("Payment successful!");
+            System.out.println("✓ Payment successful!");
+            System.out.println("========================================\n");
         }
     }
 

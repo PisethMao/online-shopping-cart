@@ -29,12 +29,22 @@ public class ShoppingCartController {
     public void viewCart(Customer customer) {
         if (customer != null) {
             ShoppingCart cart = customer.getCart();
-            System.out.println("\n=== Shopping Cart for " + customer.getName() + " ===");
-            cart.getCartItems().forEach(item -> {
-                System.out.println(item.getProduct().getName() + " x " + item.getQuantity() +
-                        " = $" + item.getTotal());
-            });
-            System.out.println("Total: $" + cart.getTotal());
+            System.out.println("\n========== SHOPPING CART ==========");
+            if (cart.getCartItems().isEmpty()) {
+                System.out.println("Your cart is empty!");
+            } else {
+                System.out.println("Customer: " + customer.getName());
+                System.out.println("-----------------------------------");
+                cart.getCartItems().forEach(item -> {
+                    System.out.printf("%-25s x %d = $%.2f%n",
+                            item.getProduct().getName(),
+                            item.getQuantity(),
+                            item.getTotal());
+                });
+                System.out.println("-----------------------------------");
+                System.out.printf("TOTAL: $%.2f%n", cart.getTotal());
+            }
+            System.out.println("===================================\n");
         }
     }
 }

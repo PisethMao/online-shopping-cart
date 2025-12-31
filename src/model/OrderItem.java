@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderItem {
+    // Getters and Setters
     private Product product;
     private int quantity;
     private double purchasePrice;
@@ -22,11 +23,4 @@ public class OrderItem {
         return purchasePrice * quantity;
     }
 
-    // Getters and Setters
-    public Product getProduct() { return product; }
-    public void setProduct(Product product) { this.product = product; }
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
-    public double getPurchasePrice() { return purchasePrice; }
-    public void setPurchasePrice(double purchasePrice) { this.purchasePrice = purchasePrice; }
 }
