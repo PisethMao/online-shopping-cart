@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CartItem {
+    // Getters and Setters
     private Product product;
     private int quantity;
 
@@ -19,9 +20,4 @@ public class CartItem {
         return product.getPrice() * quantity;
     }
 
-    // Getters and Setters
-    public Product getProduct() { return product; }
-    public void setProduct(Product product) { this.product = product; }
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
 }

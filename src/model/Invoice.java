@@ -12,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Invoice {
+    // Getters and Setters
     private int invoiceId;
     private LocalDate issueDate;
     private double totalAmount;
@@ -23,17 +24,6 @@ public class Invoice {
         this.totalAmount = totalAmount;
     }
 
-
-
-    // Getters and Setters
-    public int getInvoiceId() { return invoiceId; }
-    public void setInvoiceId(int invoiceId) { this.invoiceId = invoiceId; }
-    public LocalDate getIssueDate() { return issueDate; }
-    public void setIssueDate(LocalDate issueDate) { this.issueDate = issueDate; }
-    public double getTotalAmount() { return totalAmount; }
-    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
-    public Payment getPayment() { return payment; }
-    public void setPayment(Payment payment) { this.payment = payment; }
 
     public void setInvoice(Order order) {
         this.totalAmount = order.getTotalAmount();
