@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 public class Customer {
     // Getters and Setters
-    private int customerId;
+    private Integer customerId;
     private String name;
     private String email;
     private String phone;

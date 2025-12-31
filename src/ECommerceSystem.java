@@ -47,7 +47,7 @@ public class ECommerceSystem {
         boolean running = true;
         while (running) {
             displayMainMenu();
-            int choice = getIntInput("Enter your choice: ");
+            int choice = getMenuChoice();
 
             switch (choice) {
                 case 1:
@@ -88,13 +88,15 @@ public class ECommerceSystem {
     }
 
     private static void selectCustomer() {
-        customerView.displayAllCustomers(customerController.getAllCustomers());
-        int customerId = getIntInput("Select customer ID to continue: ");
+        List<Customer> customers = customerController.getAllCustomers();
+        customerView.displayAllCustomers(customers);
+
+        int customerId = getCustomerIdInput(customers);
         currentCustomer = customerController.getCustomerById(customerId);
 
         if (currentCustomer == null) {
             System.out.println("✗ Invalid customer ID! Selecting first customer by default.");
-            currentCustomer = customerController.getAllCustomers().get(0);
+            currentCustomer = customers.get(0);
         }
 
         System.out.println("\n✓ Welcome, " + currentCustomer.getName() + "!\n");
@@ -123,23 +125,25 @@ public class ECommerceSystem {
     }
 
     private static void browseProducts() {
-        productView.displayAllProducts(productController.getAllProducts());
+        List<Product> products = productController.getAllProducts();
+        productView.displayAllProducts(products);
+
         System.out.print("Enter product ID to view details (0 to skip): ");
-        int productId = getIntInput("");
+        int productId = getProductIdInput(products, true);
 
         if (productId > 0) {
             Product product = productController.getProductById(productId);
             if (product != null) {
                 productView.displayProduct(product);
-            } else {
-                System.out.println("✗ Product not found!\n");
             }
         }
     }
 
     private static void addProductToCart() {
-        productView.displayAllProducts(productController.getAllProducts());
-        int productId = getIntInput("Enter product ID to add to cart: ");
+        List<Product> products = productController.getAllProducts();
+        productView.displayAllProducts(products);
+
+        int productId = getProductIdInput(products, false);
         Product product = productController.getProductById(productId);
 
         if (product == null) {
@@ -147,7 +151,7 @@ public class ECommerceSystem {
             return;
         }
 
-        int quantity = getIntInput("Enter quantity: ");
+        int quantity = getPositiveIntInput("Enter quantity: ");
         if (quantity <= 0) {
             System.out.println("✗ Invalid quantity!\n");
             return;
@@ -165,10 +169,12 @@ public class ECommerceSystem {
         cartController.viewCart(currentCustomer);
 
         if (currentCustomer.getCart().getCartItems().isEmpty()) {
+            System.out.println("✗ Cart is empty!\n");
             return;
         }
 
-        int productId = getIntInput("Enter product ID to remove from cart: ");
+        List<Product> products = productController.getAllProducts();
+        int productId = getProductIdInput(products, false);
         Product product = productController.getProductById(productId);
 
         if (product == null) {
@@ -209,7 +215,7 @@ public class ECommerceSystem {
         System.out.println("1. Card Payment");
         System.out.println("2. Digital Wallet");
         System.out.println("3. Bank Transfer");
-        int paymentChoice = getIntInput("Enter choice: ");
+        int paymentChoice = getPaymentMethodChoice();
 
         Payment payment = null;
         switch (paymentChoice) {
@@ -278,7 +284,7 @@ public class ECommerceSystem {
         }
 
         orderView.displayAllOrders(customerOrders);
-        int orderId = getIntInput("Enter order ID to view details: ");
+        int orderId = getOrderIdInput(customerOrders);
         Order order = currentCustomer.getOrder(orderId);
 
         if (order == null) {
@@ -296,14 +302,203 @@ public class ECommerceSystem {
         }
     }
 
-    private static int getIntInput(String prompt) {
-        System.out.print(prompt);
-        while (!scanner.hasNextInt()) {
-            scanner.nextLine();
-            System.out.print("✗ Invalid input! Please enter a number: ");
+    // ========== VALIDATION METHODS ==========
+
+    private static int getMenuChoice() {
+        while (true) {
+            System.out.print("Enter your choice (1-9): ");
+            String input = scanner.nextLine().trim();
+
+            // Reject inputs with leading zeros or multiple digits
+            if (input.isEmpty() || input.length() > 1 || !Character.isDigit(input.charAt(0))) {
+                System.out.println("✗ Invalid input! Please enter a single digit (1-9).");
+                continue;
+            }
+
+            try {
+                int choice = Integer.parseInt(input);
+                if (choice >= 1 && choice <= 9) {
+                    return choice;
+                } else {
+                    System.out.println("✗ Please enter a number between 1 and 9.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a number.");
+            }
         }
-        int value = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-        return value;
+    }
+
+    private static int getCustomerIdInput(List<Customer> customers) {
+        List<Integer> validIds = customers.stream()
+                .map(Customer::getCustomerId)
+                .toList();
+
+        while (true) {
+            System.out.print("Select customer ID to continue: ");
+            String input = scanner.nextLine().trim();
+
+            // Reject empty input
+            if (input.isEmpty()) {
+                System.out.println("✗ Input cannot be empty!");
+                continue;
+            }
+
+            // Reject inputs with leading zeros (unless it's "0")
+            if (!input.equals("0") && input.startsWith("0")) {
+                System.out.println("✗ Please enter a number without leading zeros.");
+                continue;
+            }
+
+            try {
+                int id = Integer.parseInt(input);
+                if (validIds.contains(id)) {
+                    return id;
+                } else {
+                    System.out.println("✗ Invalid customer ID! Available IDs: " + validIds);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a number.");
+            }
+        }
+    }
+
+    private static int getProductIdInput(List<Product> products, boolean allowZero) {
+        List<Integer> validIds = products.stream()
+                .map(Product::getProductId)
+                .toList();
+
+        while (true) {
+            if (allowZero) {
+                System.out.print("Enter product ID (0 to skip, available IDs: " + validIds + "): ");
+            } else {
+                System.out.print("Enter product ID (available IDs: " + validIds + "): ");
+            }
+
+            String input = scanner.nextLine().trim();
+
+            // Reject empty input
+            if (input.isEmpty()) {
+                System.out.println("✗ Input cannot be empty!");
+                continue;
+            }
+
+            // For product IDs, we might want to allow "0" but reject "01", "001", etc.
+            if (allowZero) {
+                // If it's "0", accept it immediately
+                if (input.equals("0")) {
+                    return 0;
+                }
+                // Otherwise reject any input starting with "0"
+                if (input.startsWith("0")) {
+                    System.out.println("✗ Please enter a number without leading zeros.");
+                    continue;
+                }
+            } else {
+                // If not allowing zero, reject any input starting with "0"
+                if (input.startsWith("0")) {
+                    System.out.println("✗ Please enter a number without leading zeros.");
+                    continue;
+                }
+            }
+
+            try {
+                int id = Integer.parseInt(input);
+                if (validIds.contains(id)) {
+                    return id;
+                } else {
+                    System.out.println("✗ Invalid product ID!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a number.");
+            }
+        }
+    }
+
+    private static int getPositiveIntInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            // Reject empty input
+            if (input.isEmpty()) {
+                System.out.println("✗ Input cannot be empty!");
+                continue;
+            }
+
+            // Reject inputs with leading zeros (unless it's "0")
+            if (!input.equals("0") && input.startsWith("0")) {
+                System.out.println("✗ Please enter a number without leading zeros.");
+                continue;
+            }
+
+            try {
+                int value = Integer.parseInt(input);
+                if (value > 0) {
+                    return value;
+                } else {
+                    System.out.println("✗ Please enter a positive number.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a number.");
+            }
+        }
+    }
+
+    private static int getPaymentMethodChoice() {
+        while (true) {
+            System.out.print("Enter choice (1-3): ");
+            String input = scanner.nextLine().trim();
+
+            // Reject inputs with leading zeros or multiple digits
+            if (input.isEmpty() || input.length() > 1 || !Character.isDigit(input.charAt(0))) {
+                System.out.println("✗ Invalid input! Please enter a single digit (1-3).");
+                continue;
+            }
+
+            try {
+                int choice = Integer.parseInt(input);
+                if (choice >= 1 && choice <= 3) {
+                    return choice;
+                } else {
+                    System.out.println("✗ Please enter 1, 2, or 3.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a number.");
+            }
+        }
+    }
+
+    private static int getOrderIdInput(List<Order> orders) {
+        List<Integer> validIds = orders.stream()
+                .map(Order::getOrderId)
+                .toList();
+
+        while (true) {
+            System.out.print("Enter order ID (available IDs: " + validIds + "): ");
+            String input = scanner.nextLine().trim();
+
+            // Reject empty input
+            if (input.isEmpty()) {
+                System.out.println("✗ Input cannot be empty!");
+                continue;
+            }
+
+            // Reject inputs with leading zeros (unless it's "0")
+            if (!input.equals("0") && input.startsWith("0")) {
+                System.out.println("✗ Please enter a number without leading zeros.");
+                continue;
+            }
+
+            try {
+                int id = Integer.parseInt(input);
+                if (validIds.contains(id)) {
+                    return id;
+                } else {
+                    System.out.println("✗ Invalid order ID!");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a number.");
+            }
+        }
     }
 }
